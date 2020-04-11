@@ -51,8 +51,8 @@ function chargerHabitats() {
 
 function recupererHabitatsfr(habitatsUrls) {
     try {		
-		// Promise.all attend que toutes les promesses (réponses liées aux fetch sur les habitats) soient arrivées
-		// et renvoie un array des résultats obtenus
+        // Promise.all attend que toutes les promesses (réponses liées aux fetch sur les habitats) soient arrivées
+        // et renvoie un array des résultats obtenus
         return Promise.all(
             habitatsUrls.map( url => 
                 fetch(url)
@@ -75,10 +75,10 @@ function recupererHabitatsfr(habitatsUrls) {
 
 function remplirListeHabitats(habitats) {
     // enregistre les données des habitats, notamment url des détails des espèces
-    // pour pouvoir appeler dès que nécessaire sans de devoir rappeler api, tri sur l'id pour faire propre
+    // pour pouvoir appeler dès que nécessaire sans devoir rappeler l'api pour ces infos, tri sur l'id pour faire propre
     liensEspecesHabitats = [...habitats].sort( (x, y) => x.id - y.id );  
 	
-	// tri sur le nom, puis construcion des options du select, puis ajout dans la page
+    // tri sur le nom, puis construcion des options du select, puis ajout dans la page
     habitats.sort( (x, y) => x.nom.localeCompare(y.nom) ); 
     let options = "";
     for (let habitat of habitats) {
