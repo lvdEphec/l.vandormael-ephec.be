@@ -32,15 +32,21 @@ function initialiser() {
 function chargerHabitats() {
 	
 	fetch(POKE_API_URL_HABITAT)
-	.then(reponse => reponse.json())
-	.then(reponse => {recupererHabitatsfr(reponse.results.map(x => x.url))})
-	.catch(error => {console.log("Y a un problème ! : " + error.message)});
+	.then(reponseJson => reponseJson.json())
+	.then(reponse => recupererHabitatsfr(reponse.results.map(x => x.url)))
+	.then(habitats => {
+		remplirListeHabitats(habitats); 
+		// après chargement, enclenche un "change" pour afficher directement les espèces de l'option sélectionnée par défaut en premier
+		document.getElementById("choixHabitat").dispatchEvent(new Event('change')); 
+		// chargerEspeces.call(document.getElementById("choixHabitat")); // même chose
+		})
+	.catch(error => {console.log("Y a un problème ! : " + error.message);});
 };
 	
 
 function recupererHabitatsfr(habitatsUrls) {
     try {		
-		Promise.all(
+		return Promise.all(
             habitatsUrls.map( url => fetch(url)
 									.then(reponse => reponse.json())
 									.then(habitats => { 
@@ -51,8 +57,7 @@ function recupererHabitatsfr(habitatsUrls) {
 										return habitat;
 					                })
 							)
-		)										
-		.then (habitats => {remplirListeHabitats(habitats) } );
+		)						
 	}
     catch(err) {
         console.warn(err);
@@ -75,16 +80,16 @@ function remplirListeHabitats(habitats) {
 function chargerEspeces() {
     document.getElementById("listeEspeces").innerHTML = "";
 	// urls = liensEspecesHabitats[this.value]; normalement ok, mais on fait safe
-	const urls = liensEspecesHabitats.filter(x => (x.id == this.value))[0].urlsEspecesPokemons; // là on fait confiance :)
+	const urls = liensEspecesHabitats.filter(x => (x.id == this.value))[0].urlsEspecesPokemons; // là confiance, ce ne sera pas vide :)
 	
 	try {		
 		Promise.all(
             urls.map( url => fetch(url)
-									.then(reponse => reponse.json())
-									.then(espece => {										
-					                    return espece.names.filter(x => x.language.name === "fr")[0].name;
-					                })
-							)
+							.then(reponseJson => reponseJson.json())
+							.then(espece => {										
+								return espece.names.filter(x => x.language.name === "fr")[0].name;
+							})
+					)
 		)										
 		.then (nomsEspeces => {ajouterEspeces(nomsEspeces) } );
 	}
@@ -101,8 +106,3 @@ function ajouterEspeces(nomsEspeces) {
 	}
     document.getElementById("listeEspeces").innerHTML = liElements;
 }
-
-
-
-
-
