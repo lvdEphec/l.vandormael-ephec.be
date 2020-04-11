@@ -1,7 +1,9 @@
 # pokeapi
-Exemple de site qui affiche un résultat similaire à ce que nous pourrions obtenir en réalisant l'exercice du TP08 en 1T Structures et Données, en remplacement de SWAPI.
+Exemple de site qui affiche un résultat similaire à ce que nous pourrions obtenir en réalisant l'exercice du TP08 en 1T Structures et Données, en remplacement de l'exercice SWAPI.
 
 ------------------------------------------------
+
+Vous pouvez visualiser ici un exemple de résultat désiré : https://lvdephec.github.io/pokeapi/
 
 ETAPES SIMPLES
 
