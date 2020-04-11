@@ -35,7 +35,7 @@ function initialiser() {
 
 function chargerHabitats() {
 	
-    fetch(POKE_API_URL_HABITAT)
+    fetch(POKE_API_URL_HABITAT) 
     .then(reponseJson => reponseJson.json())
     .then(reponse => recupererHabitatsfr(reponse.results.map(x => x.url)))
     .then(habitats => {
@@ -51,15 +51,17 @@ function chargerHabitats() {
 
 function recupererHabitatsfr(habitatsUrls) {
     try {		
+		// Promise.all attend que toutes les promesses (réponses liées aux fetch sur les habitats) soient arrivées
+		// et renvoie un array des résultats obtenus
         return Promise.all(
             habitatsUrls.map( url => 
                 fetch(url)
-                .then(reponse => reponse.json())
-                .then(habitats => { 
-                    let habitat = {};
-                    habitat.id = habitats.id;
-                    habitat.nom = habitats.names.filter(x => x.language.name === "fr")[0].name;
-                    habitat.urlsEspecesPokemons = habitats.pokemon_species.map(x => x.url);
+                .then(reponseJson => reponseJson.json())
+                .then(reponseHabitat => { 
+                    let habitat = {};					
+                    habitat.nom = reponseHabitat.names.filter(x => x.language.name === "fr")[0].name; //récupère nom fr
+                    habitat.id = reponseHabitat.id; // stocke l'id pour le retrouver lors d'un choix d'habitat
+                    habitat.urlsEspecesPokemons = reponseHabitat.pokemon_species.map(x => x.url); // en profite pour stocker url des especes de l'habitat
                     return habitat;
                     }
                 )
@@ -72,10 +74,11 @@ function recupererHabitatsfr(habitatsUrls) {
 }
 
 function remplirListeHabitats(habitats) {
-    // enregistre les données, notamment url du detail des especes
-    // pour pouvoir appeler dès que nécessaire sans de devoir rappeler
+    // enregistre les données des habitats, notamment url des détails des espèces
+    // pour pouvoir appeler dès que nécessaire sans de devoir rappeler api, tri sur l'id pour faire propre
     liensEspecesHabitats = [...habitats].sort( (x, y) => x.id - y.id );  
 	
+	// tri sur le nom, puis construcion des options du select, puis ajout dans la page
     habitats.sort( (x, y) => x.nom.localeCompare(y.nom) ); 
     let options = "";
     for (let habitat of habitats) {
@@ -90,7 +93,7 @@ function remplirListeHabitats(habitats) {
 function chargerEspeces() {
     document.getElementById("listeEspeces").innerHTML = "";
     // urls = liensEspecesHabitats[this.value]; normalement ok, mais on fait safe on va aller le rechercher
-	// ci-dessous on fait confiance, ce ne sera pas vide :)
+    // ci-dessous on fait confiance, ce ne sera pas vide :)
     const urls = liensEspecesHabitats.filter(x => (x.id == this.value))[0].urlsEspecesPokemons; 
 	
     try {		
@@ -118,8 +121,3 @@ function ajouterEspeces(nomsEspeces) {
     }
     document.getElementById("listeEspeces").innerHTML = liElements;
 }
-
-
-
-
-
